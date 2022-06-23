@@ -22,7 +22,7 @@ namespace InterviewServer.DAO.Providers
 
         public Task<ResponseStatus> UpdateAsync(User updateUser)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException(); 
         }
     }
 }
