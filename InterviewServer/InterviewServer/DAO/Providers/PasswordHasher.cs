@@ -4,9 +4,6 @@ using System.Security.Cryptography;
 
 namespace InterviewServer.DAO.Providers
 {
-    /// <summary>
-    /// Hashes passwords
-    /// </summary>
     internal class PasswordHasher : IPasswordHasher<User>
     {
         public string HashPassword(User user, string password)
@@ -20,10 +17,9 @@ namespace InterviewServer.DAO.Providers
 
         public PasswordVerificationResult VerifyHashedPassword(User user, string hashedPassword, string providedPassword)
         {
-            if (hashedPassword != HashPassword(user, providedPassword))
-                return PasswordVerificationResult.Failed;
-
-            return PasswordVerificationResult.Success;
+            return hashedPassword != HashPassword(user, providedPassword)
+                ? PasswordVerificationResult.Failed
+                : PasswordVerificationResult.Success;
         }
     }
 }

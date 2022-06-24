@@ -72,7 +72,10 @@ namespace InterviewServer.DAO.Providers
             //тут можно понять больше полей, но тк логично менять только имя, оставила его 
             var user = await _usersContext.Users.FirstOrDefaultAsync(x => x.Id == update.Id).ConfigureAwait(false);
             if (user == null)
+            {
                 return ResponseStatus.NotFound;
+            }
+
             user.Name = !string.IsNullOrWhiteSpace(update.Name) ? update.Name : user.Name;
 
             await _usersContext.SaveChangesAsync();
@@ -83,7 +86,9 @@ namespace InterviewServer.DAO.Providers
         {
             var user = await _usersContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
             if (user == null || _passwordHasher.VerifyHashedPassword(user, user.Password, oldPassword) != PasswordVerificationResult.Success)
+            {
                 return ResponseStatus.WrongPasswordOrLogin;
+            }
 
             user.Password = _passwordHasher.HashPassword(user, newPassword);
             await _usersContext.SaveChangesAsync();
