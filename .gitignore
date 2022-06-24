@@ -349,3 +349,4 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 InterviewServer/InterviewServer/users.db3
+*.db3
