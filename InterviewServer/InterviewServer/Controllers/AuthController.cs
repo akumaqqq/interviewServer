@@ -20,24 +20,41 @@ namespace InterviewServer.Controllers
 
         [HttpPost]
         [Route("registration")]
-        public async Task<IActionResult> RegistrationAsync()
+        public async Task<IActionResult> RegistrationAsync(User user)
         {
-            
-            return await Task.FromResult(Ok("hello")); 
+            var result = await _usersProvider.CreatAsync(user);
+            if (result != ResponseStatus.Succeed)
+            {
+                return BadRequest(new { error = result.ToString() });
+            }
+
+            return Ok(new { result = result.ToString() });
         }
 
         [HttpDelete]
         [Route("delete")]
-        public Task<IActionResult> DeleteAsync()
+        public async Task<IActionResult> DeleteAsync(long idUser)
         {
-            return null;
+            var result = await _usersProvider.DeleteAsync(idUser);
+            if (result != ResponseStatus.Succeed)
+            {
+                return BadRequest(new { error = result.ToString() });
+            }
+
+            return Ok(new { result = result.ToString() });
         }
 
         [HttpPut]
         [Route("update")]
-        public Task<IActionResult> UpdateAsync() 
+        public async Task<IActionResult> UpdateAsync(User user) 
         {
-            return null;
+            var result = await _usersProvider.UpdateAsync(user);
+            if (result != ResponseStatus.Succeed)
+            {
+                return BadRequest(new { error = result.ToString() });
+            }
+
+            return Ok(new { result = result.ToString() });
         }
 
         [HttpGet]

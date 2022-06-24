@@ -8,5 +8,6 @@ namespace InterviewServer.DAO.Providers.Interfaces
         Task<(User, ResponseStatus)> GetAsync(long idUser); 
         Task<ResponseStatus> UpdateAsync(User updateUser); 
         Task<ResponseStatus> DeleteAsync(long idUser);
+        Task<ResponseStatus> ChangePasswordAsync(string oldPassword, string newPassword, long userId);
     }
 }

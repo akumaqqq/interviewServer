@@ -3,6 +3,9 @@
     internal enum ResponseStatus
     {
         Succeed,
-        NotFound
+        NotFound,
+        FilledNotAllRequiredFields,
+        LoginExists,
+        WrongPasswordOrLogin
     }
 }
