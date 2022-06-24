@@ -1,8 +1,13 @@
-﻿using InterviewServer.DAO.Entities;
+﻿using InterviewServer.Configuration;
+using InterviewServer.DAO.Entities;
 using InterviewServer.DAO.Providers.DB;
 using InterviewServer.DAO.Providers.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text.Json;
 
 namespace InterviewServer.DAO.Providers
 {
@@ -62,7 +67,7 @@ namespace InterviewServer.DAO.Providers
             return (user, ResponseStatus.Succeed);
         }
 
-        public async Task<ResponseStatus> UpdateAsync(User update)
+        public async Task<ResponseStatus> UpdateAsync(UpdatableUserData update)
         {
             //тут можно понять больше полей, но тк логично менять только имя, оставила его 
             var user = await _usersContext.Users.FirstOrDefaultAsync(x => x.Id == update.Id).ConfigureAwait(false);
@@ -83,6 +88,53 @@ namespace InterviewServer.DAO.Providers
             user.Password = _passwordHasher.HashPassword(user, newPassword);
             await _usersContext.SaveChangesAsync();
             return ResponseStatus.Succeed;
+        }
+
+        public async Task<TokenResponse> LogInAsync(LogInRequest logInRequest)
+        {
+            var user = await _usersContext.Users.FirstOrDefaultAsync(x => x.Login == logInRequest.Login).ConfigureAwait(false);
+            if (user == null)
+            {
+                return new TokenResponse()
+                {
+                    Status = ResponseStatus.NotFound,
+                    Token = ""
+                };
+            }
+            if (_passwordHasher.VerifyHashedPassword(user, user.Password, logInRequest.Password) != PasswordVerificationResult.Success)
+            {
+                return new TokenResponse()
+                {
+                    Status = ResponseStatus.WrongPasswordOrLogin,
+                    Token = ""
+                };
+            }
+
+            var token = GenerateToken(new
+            {
+                user.Id,
+                user.Login
+            });
+
+            return new TokenResponse()
+            {
+                Status = ResponseStatus.Succeed,
+                Token = token
+            };
+        }
+
+        private static string GenerateToken<T>(T payload)
+        {
+            JwtPayload jwtPayload = JwtPayload.Deserialize(JsonSerializer.Serialize(payload));
+            var jwt = new JwtSecurityToken(
+                    issuer: AuthOptions.ISSUER,
+                    audience: AuthOptions.AUDIENCE,
+                    notBefore: DateTime.UtcNow,
+                    claims: jwtPayload.Claims,
+                    expires: DateTime.UtcNow.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
+                    signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+            return encodedJwt;
         }
     }
 }

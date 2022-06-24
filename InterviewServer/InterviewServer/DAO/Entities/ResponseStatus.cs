@@ -1,6 +1,6 @@
 ﻿namespace InterviewServer.DAO.Entities
 {
-    internal enum ResponseStatus
+    public enum ResponseStatus
     {
         Succeed,
         NotFound,

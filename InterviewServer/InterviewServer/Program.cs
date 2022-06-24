@@ -1,3 +1,4 @@
+using InterviewServer.Configuration;
 using InterviewServer.DAO.Entities;
 using InterviewServer.DAO.Providers;
 using InterviewServer.DAO.Providers.DB;
@@ -16,11 +17,13 @@ builder.Services.AddDbContextPool<UsersContext>(opt =>
     opt.UseSqlite("Data Source=users.db3");
 });
 builder.Services.AddAutoMapper();
+builder.Services.AddAuth();
 
 var app = builder.Build();
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
