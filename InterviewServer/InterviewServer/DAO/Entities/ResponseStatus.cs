@@ -2,6 +2,7 @@
 {
     internal enum ResponseStatus
     {
-        Succeed
+        Succeed,
+        NotFound
     }
 }

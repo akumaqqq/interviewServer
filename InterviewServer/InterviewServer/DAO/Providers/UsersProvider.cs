@@ -15,7 +15,7 @@ namespace InterviewServer.DAO.Providers
         }
         public Task<ResponseStatus> CreatAsync(User newUser)
         {
-            throw new NotImplementedException(); 
+            throw new NotImplementedException();
         }
 
         public Task<ResponseStatus> DeleteAsync(long idUser)
@@ -23,26 +23,20 @@ namespace InterviewServer.DAO.Providers
             throw new NotImplementedException();
         }
 
-        public async Task<ResponseStatus> GetAsync(long idUser)
+        public async Task<(User, ResponseStatus)> GetAsync(long idUser)
         {
-            _usersContext.Users.Add(new User()
+            var user = await _usersContext.Users.SingleOrDefaultAsync(x => x.Id == idUser);
+            if (user == null)
             {
-                BirthDay = DateTime.UtcNow,
-                Login = "mjhnbgfv",
-                Name = "hngbfvd",
-                Password = "njhbgfdv",
-                Status = UserStatus.Active
-            });
+                return (null, ResponseStatus.NotFound);
+            }
 
-
-            await _usersContext.SaveChangesAsync().ConfigureAwait(false);
-
-            return ResponseStatus.Succeed;
+            return (user, ResponseStatus.Succeed);
         }
 
         public Task<ResponseStatus> UpdateAsync(User updateUser)
         {
-            throw new NotImplementedException(); 
+            throw new NotImplementedException();
         }
     }
 }

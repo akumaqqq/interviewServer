@@ -1,5 +1,6 @@
-﻿using InterviewServer.DAO.Providers.Interfaces;
-using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using InterviewServer.DAO.Entities;
+using InterviewServer.DAO.Providers.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InterviewServer.Controllers
@@ -9,10 +10,12 @@ namespace InterviewServer.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IUsersProvider _usersProvider;
+        private readonly IMapper _mapper;
 
         public AuthController(IServiceProvider serviceProvider)
         {
             _usersProvider = serviceProvider.GetService<IUsersProvider>();
+            _mapper = serviceProvider.GetService<IMapper>();
         }
 
         [HttpPost]
@@ -41,8 +44,13 @@ namespace InterviewServer.Controllers
         [Route("get")]
         public async Task<IActionResult> GetAsync(long idUser)
         {
-            var s = await _usersProvider.GetAsync(idUser);
-            return Ok();
+            (User user, ResponseStatus status) = await _usersProvider.GetAsync(idUser);
+            if (status != ResponseStatus.Succeed)
+            { 
+                return BadRequest(new { error = status.ToString() });
+            }
+
+            return Ok(_mapper.Map<UserResponse>(user));
         }
 
     }
