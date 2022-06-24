@@ -1,5 +1,8 @@
-﻿namespace InterviewServer.DAO.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace InterviewServer.DAO.Entities
 {
+    [Table("users")]
     public class User
     {
         public long Id { get; set; }

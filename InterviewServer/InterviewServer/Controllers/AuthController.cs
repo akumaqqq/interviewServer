@@ -39,9 +39,10 @@ namespace InterviewServer.Controllers
 
         [HttpGet]
         [Route("get")]
-        public Task<IActionResult> GetAsync()
+        public async Task<IActionResult> GetAsync(long idUser)
         {
-            return null;
+            var s = await _usersProvider.GetAsync(idUser);
+            return Ok();
         }
 
     }
